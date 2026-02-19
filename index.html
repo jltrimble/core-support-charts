@@ -46,13 +46,22 @@
       font-weight: 500;
       border-bottom: 1px solid #2e3a54;
     }
-    .sprint-table th:last-child { text-align: right; }
+    .sprint-table th:nth-child(2),
+    .sprint-table th:nth-child(3),
+    .sprint-table th:nth-child(4) { text-align: center; }
     .sprint-table td {
       padding: 9px 16px;
       border-bottom: 1px solid rgba(255,255,255,0.04);
       color: #9aa3b8;
     }
-    .sprint-table td:last-child { text-align: right; color: #7a859e; }
+    .sprint-table td:nth-child(2),
+    .sprint-table td:nth-child(3) {
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.03em;
+      color: #c5ccd8;
+      width: 160px;
+    }
+    .sprint-table td:nth-child(4) { text-align: center; }
     .sprint-table tbody tr:last-child td { border-bottom: none; }
     .sprint-table tbody tr:hover td { background: rgba(240,194,127,0.04); }
     .sprint-table .sprint-name { color: #e8eaf0; font-weight: 500; }
@@ -155,11 +164,11 @@ const chart4Data = SPRINTS_C4.map((s,i) => ({
 }));
 
 const CHARTS = [
-  { id:1, title:"Tickets Created by Priority per Sprint",       desc:"Stacked bars show total volume and priority composition each sprint." },
-  { id:2, title:"Created vs. Resolved per Sprint",              desc:"Track whether the team kept pace with incoming volume each sprint." },
-  { id:3, title:"Resolution Method Breakdown per Sprint",       desc:"100% stacked bars show the proportion of tickets resolved by method." },
-  { id:4, title:"Resolution Method by Ticket Count per Sprint", desc:"Line chart showing ticket counts for each resolution method and total resolved." },
-  { id:5, title:"Sprint Period Key",                            desc:"Date ranges for each sprint period (end date is inclusive)." },
+  { id:1, title:"Tickets Created by Priority per Sprint",       desc:"Stacked bars show total volume and priority composition each sprint.",           label:"Chart 1" },
+  { id:2, title:"Created vs. Resolved per Sprint",              desc:"Track whether the team kept pace with incoming volume each sprint.",             label:"Chart 2" },
+  { id:3, title:"Resolution Method Breakdown per Sprint",       desc:"100% stacked bars show the proportion of tickets resolved by method.",           label:"Chart 3" },
+  { id:4, title:"Resolution Method by Ticket Count per Sprint", desc:"Line chart showing ticket counts for each resolution method and total resolved.", label:"Chart 4" },
+  { id:5, title:"Sprint Period Key",                            desc:"Date ranges for each sprint period (end date is inclusive).",                    label:"Sprint Period Key" },
 ];
 
 const el = React.createElement;
@@ -199,20 +208,20 @@ function SprintTable() {
       el('thead', null,
         el('tr', null,
           el('th', null, 'Sprint'),
-          el('th', null, 'Year'),
-          el('th', null, 'Quarter'),
-          el('th', null, 'Start Date'),
-          el('th', null, 'End Date')
+          el('th', { style:{ textAlign:'center' } }, 'Start Date'),
+          el('th', { style:{ textAlign:'center' } }, 'End Date'),
+          el('th', { style:{ textAlign:'center' } }, 'Quarter')
         )
       ),
       el('tbody', null,
         SPRINT_PERIODS.map(row =>
           el('tr', { key:row.sprint, className: row.year === 2026 ? 'year-2026' : '' },
             el('td', null, el('span', { className:'sprint-name' }, row.sprint)),
-            el('td', null, row.year),
-            el('td', null, el('span', { className:'badge ' + qBadgeClass[row.quarter] }, row.quarter)),
-            el('td', null, row.start),
-            el('td', null, row.end)
+            el('td', { style:{ textAlign:'center', fontVariantNumeric:'tabular-nums', letterSpacing:'0.03em' } }, row.start),
+            el('td', { style:{ textAlign:'center', fontVariantNumeric:'tabular-nums', letterSpacing:'0.03em' } }, row.end),
+            el('td', { style:{ textAlign:'center' } },
+              el('span', { className:'badge ' + qBadgeClass[row.quarter] }, row.quarter)
+            )
           )
         )
       )
@@ -238,7 +247,7 @@ function App() {
         style:{ background:active===c.id?"#f0c27f":"#161b27", color:active===c.id?"#0e1117":"#7a859e",
           border:"1px solid", borderColor:active===c.id?"#f0c27f":"#232b3e",
           borderRadius:6, padding:"7px 16px", fontSize:12, fontWeight:active===c.id?700:400, transition:"all 0.15s" }
-      }, "Chart " + c.id))
+      }, c.label))
     ),
 
     ...CHARTS.filter(c=>c.id===active).map(c =>
