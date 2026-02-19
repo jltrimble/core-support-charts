@@ -13,6 +13,61 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #0e1117; color: #e8eaf0; font-family: 'DM Mono', monospace; min-height: 100vh; padding: 40px 24px; }
     button { cursor: pointer; font-family: 'DM Mono', monospace; }
+
+    /* Sprint table styles */
+    .sprint-table-wrap {
+      max-height: 480px;
+      overflow-y: auto;
+      border-radius: 8px;
+      border: 1px solid #232b3e;
+    }
+    .sprint-table-wrap::-webkit-scrollbar { width: 6px; }
+    .sprint-table-wrap::-webkit-scrollbar-track { background: #0e1117; }
+    .sprint-table-wrap::-webkit-scrollbar-thumb { background: #2e3a54; border-radius: 3px; }
+    .sprint-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      font-family: 'DM Mono', monospace;
+    }
+    .sprint-table thead tr {
+      background: #1a2235;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .sprint-table th {
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #f0c27f;
+      font-weight: 500;
+      border-bottom: 1px solid #2e3a54;
+    }
+    .sprint-table th:last-child { text-align: right; }
+    .sprint-table td {
+      padding: 9px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      color: #9aa3b8;
+    }
+    .sprint-table td:last-child { text-align: right; color: #7a859e; }
+    .sprint-table tbody tr:last-child td { border-bottom: none; }
+    .sprint-table tbody tr:hover td { background: rgba(240,194,127,0.04); }
+    .sprint-table .sprint-name { color: #e8eaf0; font-weight: 500; }
+    .sprint-table .year-2026 .sprint-name { color: #5ba8f5; }
+    .sprint-table .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+    }
+    .badge-q1 { background: rgba(91,168,245,0.12); color: #5ba8f5; }
+    .badge-q2 { background: rgba(112,201,160,0.12); color: #70c9a0; }
+    .badge-q3 { background: rgba(240,146,59,0.12); color: #f0923b; }
+    .badge-q4 { background: rgba(224,92,106,0.12); color: #e05c6a; }
   </style>
 </head>
 <body>
@@ -36,6 +91,48 @@ const RAW = {
   totalCreated: [42,27,49,21,45,35,56,41,42,41,33,39,26,33,31,27,30,18,22,20,26,24,14,20,25,14,9,26,39],
   totalResolved:[33,14,23,34,26,24,20,28,23,34,32,29,21,18,25,18,18,14,55,9,41,41,18,14,19,11,10,12,27],
 };
+
+const SPRINT_PERIODS = [
+  { sprint:'V1',  year:2025, quarter:'Q1', start:'2025-01-07', end:'2025-01-21' },
+  { sprint:'V2',  year:2025, quarter:'Q1', start:'2025-01-22', end:'2025-02-03' },
+  { sprint:'V3',  year:2025, quarter:'Q1', start:'2025-02-04', end:'2025-02-18' },
+  { sprint:'V4',  year:2025, quarter:'Q1', start:'2025-02-19', end:'2025-03-03' },
+  { sprint:'V5',  year:2025, quarter:'Q1', start:'2025-03-04', end:'2025-03-17' },
+  { sprint:'V6',  year:2025, quarter:'Q1', start:'2025-03-18', end:'2025-03-31' },
+  { sprint:'V7',  year:2025, quarter:'Q2', start:'2025-04-01', end:'2025-04-14' },
+  { sprint:'V8',  year:2025, quarter:'Q2', start:'2025-04-15', end:'2025-04-28' },
+  { sprint:'V9',  year:2025, quarter:'Q2', start:'2025-04-29', end:'2025-05-12' },
+  { sprint:'V10', year:2025, quarter:'Q2', start:'2025-05-13', end:'2025-05-27' },
+  { sprint:'V11', year:2025, quarter:'Q2', start:'2025-05-28', end:'2025-06-09' },
+  { sprint:'V12', year:2025, quarter:'Q2', start:'2025-06-10', end:'2025-06-23' },
+  { sprint:'V13', year:2025, quarter:'Q3', start:'2025-06-24', end:'2025-07-07' },
+  { sprint:'V14', year:2025, quarter:'Q3', start:'2025-07-08', end:'2025-07-21' },
+  { sprint:'V15', year:2025, quarter:'Q3', start:'2025-07-22', end:'2025-08-04' },
+  { sprint:'V16', year:2025, quarter:'Q3', start:'2025-08-05', end:'2025-08-18' },
+  { sprint:'V17', year:2025, quarter:'Q3', start:'2025-08-19', end:'2025-09-02' },
+  { sprint:'V18', year:2025, quarter:'Q3', start:'2025-09-03', end:'2025-09-15' },
+  { sprint:'V19', year:2025, quarter:'Q3', start:'2025-09-16', end:'2025-09-29' },
+  { sprint:'V20', year:2025, quarter:'Q4', start:'2025-09-30', end:'2025-10-13' },
+  { sprint:'V21', year:2025, quarter:'Q4', start:'2025-10-14', end:'2025-10-27' },
+  { sprint:'V22', year:2025, quarter:'Q4', start:'2025-10-28', end:'2025-11-10' },
+  { sprint:'V23', year:2025, quarter:'Q4', start:'2025-11-11', end:'2025-11-18' },
+  { sprint:'V24', year:2025, quarter:'Q4', start:'2025-11-19', end:'2025-12-01' },
+  { sprint:'V25', year:2025, quarter:'Q4', start:'2025-12-02', end:'2025-12-15' },
+  { sprint:'V26', year:2025, quarter:'Q4', start:'2025-12-16', end:'2025-12-29' },
+  { sprint:'W1',  year:2026, quarter:'Q1', start:'2025-12-30', end:'2026-01-12' },
+  { sprint:'W2',  year:2026, quarter:'Q1', start:'2026-01-13', end:'2026-01-26' },
+  { sprint:'W3',  year:2026, quarter:'Q1', start:'2026-01-27', end:'2026-02-09' },
+  { sprint:'W4',  year:2026, quarter:'Q1', start:'2026-02-10', end:'2026-02-23' },
+  { sprint:'W5',  year:2026, quarter:'Q1', start:'2026-02-24', end:'2026-03-09' },
+  { sprint:'W6',  year:2026, quarter:'Q1', start:'2026-03-10', end:'2026-03-23' },
+  { sprint:'W7',  year:2026, quarter:'Q1', start:'2026-03-24', end:'2026-04-06' },
+  { sprint:'W8',  year:2026, quarter:'Q2', start:'2026-04-07', end:'2026-04-20' },
+  { sprint:'W9',  year:2026, quarter:'Q2', start:'2026-04-21', end:'2026-05-04' },
+  { sprint:'W10', year:2026, quarter:'Q2', start:'2026-05-05', end:'2026-05-18' },
+  { sprint:'W11', year:2026, quarter:'Q2', start:'2026-05-19', end:'2026-06-01' },
+  { sprint:'W12', year:2026, quarter:'Q2', start:'2026-06-02', end:'2026-06-15' },
+  { sprint:'W13', year:2026, quarter:'Q2', start:'2026-06-16', end:'2026-06-29' },
+];
 
 const COLORS = {
   P1:"#e05c6a", P2:"#f0923b", P3:"#5ba8f5", P4:"#70c9a0", "NULL":"#8a7ec8",
@@ -62,6 +159,7 @@ const CHARTS = [
   { id:2, title:"Created vs. Resolved per Sprint",              desc:"Track whether the team kept pace with incoming volume each sprint." },
   { id:3, title:"Resolution Method Breakdown per Sprint",       desc:"100% stacked bars show the proportion of tickets resolved by method." },
   { id:4, title:"Resolution Method by Ticket Count per Sprint", desc:"Line chart showing ticket counts for each resolution method and total resolved." },
+  { id:5, title:"Sprint Period Key",                            desc:"Date ranges for each sprint period (end date is inclusive)." },
 ];
 
 const el = React.createElement;
@@ -94,6 +192,34 @@ function TipBox({ active, payload, label, pct }) {
   );
 }
 
+function SprintTable() {
+  const qBadgeClass = { Q1:'badge-q1', Q2:'badge-q2', Q3:'badge-q3', Q4:'badge-q4' };
+  return el('div', { className:'sprint-table-wrap' },
+    el('table', { className:'sprint-table' },
+      el('thead', null,
+        el('tr', null,
+          el('th', null, 'Sprint'),
+          el('th', null, 'Year'),
+          el('th', null, 'Quarter'),
+          el('th', null, 'Start Date'),
+          el('th', null, 'End Date')
+        )
+      ),
+      el('tbody', null,
+        SPRINT_PERIODS.map(row =>
+          el('tr', { key:row.sprint, className: row.year === 2026 ? 'year-2026' : '' },
+            el('td', null, el('span', { className:'sprint-name' }, row.sprint)),
+            el('td', null, row.year),
+            el('td', null, el('span', { className:'badge ' + qBadgeClass[row.quarter] }, row.quarter)),
+            el('td', null, row.start),
+            el('td', null, row.end)
+          )
+        )
+      )
+    )
+  );
+}
+
 function App() {
   const [active, setActive] = useState(1);
 
@@ -102,7 +228,7 @@ function App() {
     el('div', { style:{ borderLeft:"3px solid #f0c27f", paddingLeft:16, marginBottom:36 } },
       el('p', { style:{ fontSize:10, letterSpacing:"0.2em", textTransform:"uppercase", color:"#f0c27f", marginBottom:4 } }, "Sprint Analytics"),
       el('h1', { style:{ fontSize:28, fontWeight:700, fontFamily:"Fraunces, serif", margin:0 } }, "Core Support Ticket Throughput"),
-  el('p', { style:{ fontSize:12, color:"#7a859e", marginTop:4 } }, "2025-2026"),
+      el('p', { style:{ fontSize:12, color:"#7a859e", marginTop:4 } }, "2025-2026"),
       el('p', { style:{ fontSize:12, color:"#7a859e", marginTop:4 } }, "V1 – W3 · 29 sprints")
     ),
 
@@ -164,7 +290,6 @@ function App() {
 
         c.id===4 && el(React.Fragment, null,
           el(Legend, { line:true, items:[["Code Change","#5ba8f5"],["No Code Change","#70c9a0"],["Closed","#e05c6a"],["Total Resolved","#f0c27f"]] }),
-
           el(ResponsiveContainer, { width:"100%", height:320 },
             el(LineChart, { data:chart4Data, margin:{top:4,right:8,left:-10,bottom:20} },
               el(CartesianGrid, gridProps),
@@ -177,7 +302,9 @@ function App() {
               el(Line, { type:"monotone", dataKey:"Total Resolved", stroke:"#f0c27f", strokeWidth:2.5, strokeDasharray:"5 3", dot:{r:2.5}, activeDot:{r:5} })
             )
           )
-        )
+        ),
+
+        c.id===5 && el(SprintTable)
       )
     )
   );
